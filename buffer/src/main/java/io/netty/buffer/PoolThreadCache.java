@@ -370,7 +370,7 @@ final class PoolThreadCache {
          */
         public final boolean allocate(PooledByteBuf<T> buf, int reqCapacity, PoolThreadCache threadCache) {
             Entry<T> entry = queue.poll();
-            if (entry == null) {
+            if (entry == null) { //第一次缓存为空，返回 缓存分配不成功
                 return false;
             }
             initBuf(entry.chunk, entry.nioBuffer, entry.handle, buf, reqCapacity, threadCache);

@@ -133,6 +133,7 @@ public class NioServerSocketChannel extends AbstractNioMessageChannel
         if (PlatformDependent.javaVersion() >= 7) {
             javaChannel().bind(localAddress, config.getBacklog());
         } else {
+            //backlog 最大等待连接数
             javaChannel().socket().bind(localAddress, config.getBacklog());
         }
     }
@@ -148,6 +149,7 @@ public class NioServerSocketChannel extends AbstractNioMessageChannel
 
         try {
             if (ch != null) {
+                //构造NioSocketChannel ，感兴趣事件read
                 buf.add(new NioSocketChannel(this, ch));
                 return 1;
             }

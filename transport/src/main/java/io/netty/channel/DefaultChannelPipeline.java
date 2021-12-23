@@ -1112,6 +1112,8 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         // the EventLoop.
         PendingHandlerCallback task = pendingHandlerCallbackHead;
         while (task != null) {
+            //callHandlerAddedForAllHandlers这个任务可以让自己指定的线程来执行
+            //handlerAdded方法会调用ChannelIntializer的initChannel方法addLast添加业务处理器
             task.execute();
             task = task.next;
         }

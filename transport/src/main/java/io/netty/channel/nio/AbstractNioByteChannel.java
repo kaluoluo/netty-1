@@ -288,6 +288,7 @@ public abstract class AbstractNioByteChannel extends AbstractNioChannel {
 
     protected final void incompleteWrite(boolean setOpWrite) {
         // Did not write completely.
+        //写半包
         if (setOpWrite) {
             setOpWrite();
         } else {

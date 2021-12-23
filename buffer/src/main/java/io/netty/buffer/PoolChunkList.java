@@ -118,6 +118,8 @@ final class PoolChunkList<T> implements PoolChunkListMetric {
 
     boolean free(PoolChunk<T> chunk, long handle, int normCapacity, ByteBuffer nioBuffer) {
         chunk.free(handle, normCapacity, nioBuffer);
+        //随着 Chunk 中 Page 的不断分配和释放，会导致很多碎片内存段，大大增加了之后分配一段连续内存的失败率。
+        // 针对这种情况，可以把内存使用率较大的 Chunk 放到PoolChunkList 链表更后面。
         if (chunk.freeBytes > freeMaxThreshold) {
             remove(chunk);
             // Move the PoolChunk down the PoolChunkList linked-list.

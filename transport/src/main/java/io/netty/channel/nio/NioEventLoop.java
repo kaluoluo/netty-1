@@ -487,7 +487,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
                         // Ensure we always run tasks.
                         ranTasks = runAllTasks();
                     }
-                } else if (strategy > 0) {
+                } else if (strategy > 0) {//处理连接接入和io事件
                     final long ioStartTime = System.nanoTime();
                     try {
                         processSelectedKeys();
@@ -497,6 +497,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
                         ranTasks = runAllTasks(ioTime * (100 - ioRatio) / ioRatio);
                     }
                 } else {
+                    //处理注册,channelPipline添加ServerBootStrapAcceptor Handler
                     ranTasks = runAllTasks(0); // This will run the minimum number of tasks
                 }
 
@@ -651,6 +652,9 @@ public final class NioEventLoop extends SingleThreadEventLoop {
 
             final Object a = k.attachment();
 
+            //之前在注册接收感兴趣的事件添加了附加对象NioServerSocket
+            //如果这里拿到是这个对象，说明这个key就是接收事件
+            //因为当触发了事件，就会把这个事件加到这个Set中
             if (a instanceof AbstractNioChannel) {
                 processSelectedKey(k, (AbstractNioChannel) a);
             } else {
@@ -806,10 +810,12 @@ public final class NioEventLoop extends SingleThreadEventLoop {
     }
 
     private int select(long deadlineNanos) throws IOException {
+        // 不是定时任务，进行阻塞
         if (deadlineNanos == NONE) {
             return selector.select();
         }
         // Timeout will only be 0 if deadline is within 5 microsecs
+        // 意思就是如果定时任务时间<0.5s,就执行一次非阻塞selector,else 执行阻塞方法
         long timeoutMillis = deadlineToDelayNanos(deadlineNanos + 995000L) / 1000000L;
         return timeoutMillis <= 0 ? selector.selectNow() : selector.select(timeoutMillis);
     }

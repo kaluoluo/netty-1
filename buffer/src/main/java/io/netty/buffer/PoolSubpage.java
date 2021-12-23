@@ -141,6 +141,7 @@ final class PoolSubpage<T> implements PoolSubpageMetric {
     }
 
     private void addToPool(PoolSubpage<T> head) {
+        //头插法
         assert prev == null && next == null;
         prev = head;
         next = head.next;

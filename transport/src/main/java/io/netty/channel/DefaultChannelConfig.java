@@ -77,7 +77,7 @@ public class DefaultChannelConfig implements ChannelConfig {
 
     protected DefaultChannelConfig(Channel channel, RecvByteBufAllocator allocator) {
         setRecvByteBufAllocator(allocator, channel.metadata());
-        this.channel = channel;
+        this.channel = channel;//NioServerSocketChannel
     }
 
     @Override
